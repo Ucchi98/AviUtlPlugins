@@ -1,0 +1,4 @@
+LIBRARY ParamCopy.auf
+
+EXPORTS
+	GetFilterTable @1

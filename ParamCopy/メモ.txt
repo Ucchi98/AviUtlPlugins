@@ -1,0 +1,256 @@
+		{
+#define FILTER_ID_BAS_DRAW	10
+#define FILTER_ID_EXT_DRAW	11
+#if 0
+			int nObjectIdx = aui.GetCurrentObjectIndex();
+			ExEdit::Object* o = aui.GetSortedObject(nObjectIdx);
+			ExEdit::Filter* fBas = aui.GetFilter(FILTER_ID_BAS_DRAW);
+			ExEdit::Filter* fExt = aui.GetFilter(FILTER_ID_EXT_DRAW);
+
+			MY_TRACE_INT(fBas->track_gui->bx);
+			MY_TRACE_INT(fBas->track_gui->by);
+			MY_TRACE_INT(fBas->track_gui->bz);
+			MY_TRACE_INT(fExt->track_gui->cx);
+			MY_TRACE_INT(fExt->track_gui->cy);
+			MY_TRACE_INT(fExt->track_gui->cz);
+#else
+			int nObjects = aui.GetObjectCount();
+			int nObjectIdx = aui.GetCurrentObjectIndex();
+			int nFilterIdx = aui.GetCurrentFilterIndex();
+
+			ExEdit::Object *o = aui.GetSortedObject(nObjectIdx);
+
+			int nFilters = o->countFilters();
+
+			//MY_TRACE("Objects: %02d, ObjectIdx: %02d, FilterIdx: %02d, Filters: %02d\n",
+			//	nObjects, nObjectIdx, nFilterIdx, nFilters);
+
+			int nFilterIds[ExEdit::Object::MAX_FILTER] = { -1 };
+
+			// 当該オブジェクトのフィルタのIDを取得
+			int nIdx = 0;
+			for (const auto& v : o->filter_param) {
+				if (!v.is_valid()) continue;
+
+				nFilterIds[nIdx++] = v.id;
+				//MY_TRACE("FilterId: %02d, TrackBegin: %02d\n", v.id, v.track_begin);
+
+				ExEdit::Filter* f = aui.GetFilter(v.id);
+				//MY_TRACE("FilterId: %02d, FilterName: %s\n", v.id, f->name);
+
+				if (f->track_gui == NULL) continue;
+
+				//MY_TRACE("%02d, %02d, %02d\n", f->track_gui->bx, f->track_gui->by, f->track_gui->bz);
+				//MY_TRACE("%02d, %02d, %02d\n", f->track_gui->rx, f->track_gui->ry, f->track_gui->rz);
+				//MY_TRACE("%02d, %02d, %02d\n", f->track_gui->cx, f->track_gui->cy, f->track_gui->cz);
+				//MY_TRACE("%02d\n", f->track_gui->zoom);
+				//MY_TRACE("%02d\n", f->track_gui->aspect);
+				//MY_TRACE("%02d\n", f->track_gui->alpha);
+			}
+#endif
+		}
+
+
+
+
+
+
+			switch(message) {
+		case WM_PAINT:
+			break;
+		case WM_FILTER_UPDATE:// 各フィルタ設定や編集内容が変更された直後に送られます
+			OutputDebugString("WM_FILTER_UPDATE\n");
+			break;
+		case WM_FILTER_FILE_OPEN:// 編集ファイルがオープンされた直後に送られます
+			OutputDebugString("WM_FILTER_FILE_OPEN\n");
+			break;
+		case WM_FILTER_FILE_UPDATE:// 編集ファイルの更新(追加や音声読み込み等)があった直後に送られます
+			OutputDebugString("WM_FILTER_FILE_UPDATE\n");
+			break;
+		case WM_FILTER_FILE_CLOSE:// 編集ファイルがクローズされる直前に送られます
+			OutputDebugString("WM_FILTER_FILE_CLOSE\n");
+			break;
+		case WM_FILTER_INIT:// 開始直後に送られます
+			OutputDebugString("WM_FILTER_INIT\n");
+			break;
+		case WM_FILTER_EXIT:// 終了直前に送られます
+			OutputDebugString("WM_FILTER_EXIT\n");
+			break;
+		case WM_FILTER_SAVE_START:// セーブが開始される直前に送られます
+			OutputDebugString("WM_FILTER_SAVE_START\n");
+			break;
+		case WM_FILTER_SAVE_END:// セーブが終了された直後に送られます
+			OutputDebugString("WM_FILTER_SAVE_END\n");
+			break;
+		case WM_FILTER_IMPORT:// インポートが選択された直後に送られます
+			OutputDebugString("WM_FILTER_IMPORT\n");
+			break;
+		case WM_FILTER_EXPORT:// エクスポートが選択された直後に送られます
+			OutputDebugString("WM_FILTER_EXPORT\n");
+			break;
+		case WM_FILTER_CHANGE_ACTIVE:// フィルタの有効/無効が変更された直後に送られます
+			OutputDebugString("WM_FILTER_CHANGE_ACTIVE\n");
+			break;
+		case WM_FILTER_CHANGE_WINDOW:// フィルタウィンドウの表示/非表示が変更された直後に送られます
+			OutputDebugString("WM_FILTER_CHANGE_WINDOW\n");
+			break;
+		case WM_FILTER_CHANGE_PARAM:// 自分のフィルタの設定が変更された直後に送られます
+			OutputDebugString("WM_FILTER_CHANGE_PARAM\n");
+			break;
+		case WM_FILTER_CHANGE_EDIT:// 編集中/非編集中が変更された直後に送られます
+			OutputDebugString("WM_FILTER_CHANGE_EDIT\n");
+			break;
+			// これ以降のメッセージはFILTER_FLAG_MAIN_MESSAGE設定時のみ送られます
+		case WM_FILTER_MAIN_MOUSE_DOWN:// メインウィンドウでマウスの左ボタンが押された時に送られます
+			OutputDebugString("WM_FILTER_MAIN_MOUSE_DOWN\n");
+			break;
+		case WM_FILTER_MAIN_MOUSE_UP:// メインウィンドウでマウスが移動した時に送られます
+			OutputDebugString("WM_FILTER_MAIN_MOUSE_UP\n");
+			break;
+		case WM_FILTER_MAIN_MOUSE_MOVE:// メインウィンドウでマウスの左ボタンが離された時に送られます
+			OutputDebugString("WM_FILTER_MAIN_MOUSE_MOVE\n");
+			break;
+		case WM_FILTER_MAIN_MOUSE_DBLCLK:// メインウィンドウでマウスの左ボタンがダブルクリックされた時に送られます
+			OutputDebugString("WM_FILTER_MAIN_MOUSE_DBLCLK\n");
+			break;
+		case WM_FILTER_MAIN_MOUSE_R_DOWN:// メインウィンドウでマウスの右ボタンが押された時に送られます
+			OutputDebugString("WM_FILTER_MAIN_MOUSE_R_DOWN\n");
+			break;
+		case WM_FILTER_MAIN_MOUSE_R_UP:// メインウィンドウでマウスの右ボタンが離された時に送られます
+			OutputDebugString("WM_FILTER_MAIN_MOUSE_R_UP\n");
+			break;
+		case WM_FILTER_MAIN_MOUSE_WHEEL:// メインウィンドウでマウスのホイールが回転した時に送られます
+			OutputDebugString("WM_FILTER_MAIN_MOUSE_WHEEL\n");
+			break;
+		case WM_FILTER_MAIN_KEY_DOWN:// メインウィンドウでキーが押された時に送られます
+			OutputDebugString("WM_FILTER_MAIN_KEY_DOWN\n");
+			break;
+		case WM_FILTER_MAIN_KEY_UP:// メインウィンドウでキーが離された時に送られます
+			OutputDebugString("WM_FILTER_MAIN_KEY_UP\n");
+			break;
+		case WM_FILTER_MAIN_MOVESIZE:// メインウィンドウの位置やサイズが変更された時に送られます
+			OutputDebugString("WM_FILTER_MAIN_MOVESIZE\n");
+			break;
+		case WM_FILTER_MAIN_CONTEXTMENU:// メインウィンドウでコンテキストメニューが表示される時に送られます
+			OutputDebugString("WM_FILTER_MAIN_CONTEXTMENU\n");
+			break;
+	}
+	return FALSE;
+
+
+
+	#if 0
+			if (wParam == 0x00001194) // 一番上の▼押下時に呼ばれる おそらく n 番目の▼は 0x0001194 + n
+			{
+				for (int nIdx = 0; nIdx < ExEdit::Object::MAX_FILTER; nIdx++)
+				{
+					ExEdit::Object::FilterParam fp = o->filter_param[nIdx];
+					if (!fp.is_valid()) continue;
+
+					unsigned char fs = (unsigned char)o->filter_status[nIdx];
+					ExEdit::Filter* f = aui.GetFilter(fp.id);
+					MY_TRACE("FilterId: %02d, FilterName: %s, FilterStatus: %s\n", fp.id, f->name, (fs==5 ? "E" : "C"));
+				}
+				break;
+			}
+			if (wParam == 0x00001195)
+			{
+				break;
+			}
+#endif
+
+
+
+				int nObjIdx = aui.GetCurrentObjectIndex();
+					if (nObjIdx < 0) break;
+
+					ExEdit::Object* o = aui.GetSortedObject(nObjIdx);
+					ExEdit::Object::FilterParam fp = o->filter_param[0];
+					ExEdit::Object::FilterStatus fs = o->filter_status[0];
+
+					uip.is_folding = !((fs & ExEdit::Object::FilterStatus::Folding) == ExEdit::Object::FilterStatus::Folding);
+					uip.track_begin = fp.track_begin;
+
+
+
+
+
+
+
+			case ID_BN_X_S:
+				//GetWindowText(wp[0].hWndLED, sBuf, 16);
+				//SetFocus(wp[0].hWndRED);
+				//SetWindowText(wp[0].hWndRED, sBuf);
+				//SetFocus(hwnd);
+				break;
+			case ID_BN_X_E:
+				//GetWindowText(wp[0].hWndRED, sBuf, 16);
+				//SetFocus(wp[0].hWndLED);
+				//SetWindowText(wp[0].hWndLED, sBuf);
+				//SetFocus(hwnd);
+				break;
+
+			case ID_BN_Y_S:
+				//GetWindowText(wp[1].hWndLED, sBuf, 16);
+				//SetFocus(wp[1].hWndRED);
+				//SetWindowText(wp[1].hWndRED, sBuf);
+				//SetFocus(hwnd);
+				break;
+			case ID_BN_Y_E:
+				//GetWindowText(wp[1].hWndRED, sBuf, 16);
+				//SetFocus(wp[1].hWndLED);
+				//SetWindowText(wp[1].hWndLED, sBuf);
+				//SetFocus(hwnd);
+				break;
+
+			case ID_BN_Z_S:
+				//GetWindowText(wp[2].hWndLED, sBuf, 16);
+				//SetFocus(wp[2].hWndRED);
+				//SetWindowText(wp[2].hWndRED, sBuf);
+				//SetFocus(hwnd);
+				break;
+			case ID_BN_Z_E:
+				//GetWindowText(wp[2].hWndRED, sBuf, 16);
+				//SetFocus(wp[2].hWndLED);
+				//SetWindowText(wp[2].hWndLED, sBuf);
+				//SetFocus(hwnd);
+				break;
+
+			case ID_BN_M_S:
+				//GetWindowText(wp[3].hWndLED, sBuf, 16);
+				//SetFocus(wp[3].hWndRED);
+				//SetWindowText(wp[3].hWndRED, sBuf);
+				//SetFocus(hwnd);
+				break;
+			case ID_BN_M_E:
+				//GetWindowText(wp[3].hWndRED, sBuf, 16);
+				//SetFocus(wp[3].hWndLED);
+				//SetWindowText(wp[3].hWndLED, sBuf);
+				//SetFocus(hwnd);
+				break;
+
+			case ID_BN_T_S:
+				//GetWindowText(wp[4].hWndLED, sBuf, 16);
+				//SetFocus(wp[4].hWndRED);
+				//SetWindowText(wp[4].hWndRED, sBuf);
+				//SetFocus(hwnd);
+				break;
+			case ID_BN_T_E:
+				//GetWindowText(wp[5].hWndRED, sBuf, 16);
+				//SetFocus(wp[5].hWndLED);
+				//SetWindowText(wp[5].hWndLED, sBuf);
+				//SetFocus(hwnd);
+				break;
+
+			case ID_BN_R_S:
+				//GetWindowText(wp[6].hWndLED, sBuf, 16);
+				//SetFocus(wp[6].hWndRED);
+				//SetWindowText(wp[6].hWndRED, sBuf);
+				//SetFocus(hwnd);
+				break;
+			case ID_BN_R_E:
+				//GetWindowText(wp[7].hWndRED, sBuf, 16);
+				//SetFocus(wp[7].hWndLED);
+				//SetWindowText(wp[7].hWndLED, sBuf);
+				//SetFocus(hwnd);
+				break;

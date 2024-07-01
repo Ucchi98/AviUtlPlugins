@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{0b922472-41b3-4e1c-920a-d627517e2787}</ProjectGuid>
+    <RootNamespace>ParamCopy</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ParamCopy</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetExt>.auf</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetExt>.auf</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetExt>.auf</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetExt>.auf</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>.\Common;.\aviutl_exedit_sdk;.\Detours\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>ParamCopy.def</ModuleDefinitionFile>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>SET RELEASEPATH="D:\Users\Ucchi\Downloads\aviutl110\plugins"
+if "$(COMPUTERNAME)" == "ALPHONSE" (
+  SET RELEASEPATH="D:\Users\Ucchi\Downloads\aviutl110\plugins"
+)
+if "$(COMPUTERNAME)" == "DESKTOP-HSOA0QP" (
+  SET RELEASEPATH="C:\Users\Uchikubo\Downloads\aviutl110\plugins"
+)
+copy "$(TargetPath)" "%RELEASEPATH%"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>.\Common;.\aviutl_exedit_sdk;.\Detours\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>ParamCopy.def</ModuleDefinitionFile>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>SET RELEASEPATH="D:\Users\Ucchi\Downloads\aviutl110\plugins"
+if "$(COMPUTERNAME)" == "ALPHONSE" (
+  SET RELEASEPATH="D:\Users\Ucchi\Downloads\aviutl110\plugins"
+)
+if "$(COMPUTERNAME)" == "DESKTOP-HSOA0QP" (
+  SET RELEASEPATH="C:\Users\Uchikubo\Downloads\aviutl110\plugins"
+)
+copy "$(TargetPath)" "%RELEASEPATH%"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>.\Common;.\aviutl_exedit_sdk;.\Detours\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>ParamCopy.def</ModuleDefinitionFile>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>SET RELEASEPATH="D:\Users\Ucchi\Downloads\aviutl110\plugins"
+if "$(COMPUTERNAME)" == "ALPHONSE" (
+  SET RELEASEPATH="D:\Users\Ucchi\Downloads\aviutl110\plugins"
+)
+if "$(COMPUTERNAME)" == "DESKTOP-HSOA0QP" (
+  SET RELEASEPATH="C:\Users\Uchikubo\Downloads\aviutl110\plugins"
+)
+copy "$(TargetPath)" "%RELEASEPATH%"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>.\Common;.\aviutl_exedit_sdk;.\Detours\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ModuleDefinitionFile>ParamCopy.def</ModuleDefinitionFile>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>SET RELEASEPATH="D:\Users\Ucchi\Downloads\aviutl110\plugins"
+if "$(COMPUTERNAME)" == "ALPHONSE" (
+  SET RELEASEPATH="D:\Users\Ucchi\Downloads\aviutl110\plugins"
+)
+if "$(COMPUTERNAME)" == "DESKTOP-HSOA0QP" (
+  SET RELEASEPATH="C:\Users\Uchikubo\Downloads\aviutl110\plugins"
+)
+copy "$(TargetPath)" "%RELEASEPATH%"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="ParamCopy.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="filter.cpp" />
+    <ClCompile Include="ParamCopy.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="aviutl_exedit_sdk\aviutl.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\AviFileHandle.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\aviutl_window_info_t.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\Color.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\ColorPlugin.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\ColorProcInfo.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\EditHandle.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\Exfunc.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\FileInfo.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\filter.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\FilterPlugin.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\FilterProcInfo.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\flag.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\FrameStatus.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\input.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\InputHandle.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\InputInfo.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\InputPlugin.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\LangResources.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\MultiThreadFunc.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\output.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\OutputInfo.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\OutputPlugin.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\pixel.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\SharedMemory.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\aviutl\SysInfo.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\BackupFileHandler.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\cache.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\CameraZbuffer.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\CommandId.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\exdata.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\Exfunc.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\exo.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\Filter.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\FilterProcInfo.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\layer.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\Object.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\ObjectFilterIndex.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\output_rgba.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\pixel.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\save.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\scene.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\structs.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\SubFilterProcInfo.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\susie.hpp" />
+    <ClInclude Include="aviutl_exedit_sdk\exedit\undo.hpp" />
+    <ClInclude Include="Common\AviUtlInternal.h" />
+    <ClInclude Include="Common\AviUtl\Window.h" />
+    <ClInclude Include="Common\AviUtl\WindowHolder.h" />
+    <ClInclude Include="Common\DesignBase.h" />
+    <ClInclude Include="Common\Dialog.h" />
+    <ClInclude Include="Common\FileUpdateChecker.h" />
+    <ClInclude Include="Common\Gdi.h" />
+    <ClInclude Include="Common\Gdiplus.h" />
+    <ClInclude Include="Common\Hook.h" />
+    <ClInclude Include="Common\JSON.h" />
+    <ClInclude Include="Common\MFC.h" />
+    <ClInclude Include="Common\MSXML.h" />
+    <ClInclude Include="Common\Profile.h" />
+    <ClInclude Include="Common\Tracer.h" />
+    <ClInclude Include="Common\Tracer2.h" />
+    <ClInclude Include="Common\Window.h" />
+    <ClInclude Include="Common\Window2.h" />
+    <ClInclude Include="Common\WinUtility.h" />
+    <ClInclude Include="Detours\include\detours.h" />
+    <ClInclude Include="Detours\include\detver.h" />
+    <ClInclude Include="Detours\include\syelog.h" />
+    <ClInclude Include="filter.h" />
+    <ClInclude Include="ParamCopy.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ParamCopy.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="rightArrow.ico" />
+    <Image Include="leftArrow.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
