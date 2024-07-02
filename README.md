@@ -10,6 +10,8 @@
 * 透明度
 * 回転
 
+![image](https://github.com/Ucchi98/AviUtlPlugins/assets/6383346/292165da-280e-4764-86b3-33cbed3079e7)
+
 ## Getting Started
 
 ParamCopy.auf を AviUtl の Plugin フォルダにコピーします。
