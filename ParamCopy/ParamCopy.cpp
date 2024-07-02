@@ -31,6 +31,7 @@
 
 static AviUtlInternal aui;
 static ParamCopyRow wp[8] = { 0 };
+static HWND hWndBkup[8] = { 0 };
 static ObjectType otCurrent = OT_STD_DRAW;
 static bool is_fold = false;
 
@@ -97,10 +98,6 @@ void AdjustButtonPos(HWND hWnd, int *nX, int *nY, int *nW, int *nH, UINT *uFlags
 		{
 			if (*nX == 214) wp[nvIdx].hWndCBN = hWnd;
 		}
-		// Restore button size to original
-		*nW = BUTTON_ORG_W;
-		*nH = BUTTON_ORG_H;
-		*uFlags &= ~SWP_NOSIZE;
 		break;
 
 	case CA_EDIT:
@@ -234,6 +231,15 @@ IMPLEMENT_HOOK_PROC_NULL(LRESULT, WINAPI, SettingDialogProc, (HWND hwnd, UINT me
 				break;
 			}
 
+			// Restore Button Size
+			for (int nIdx = 0; nIdx < 6; nIdx++)
+			{
+				if (hWndBkup[nIdx] != NULL)
+				{
+					true_SetWindowPos(hWndBkup[nIdx], NULL, 0, 0, BUTTON_ORG_W, BUTTON_ORG_H, SWP_NOZORDER | SWP_NOMOVE);
+				}
+			}
+
 			// Show/Hide ParamCopy Button and Set Button Pos and Size
 			for (int nIdx = 0; nIdx < nvIdxMax; nIdx++)
 			{
@@ -241,13 +247,16 @@ IMPLEMENT_HOOK_PROC_NULL(LRESULT, WINAPI, SettingDialogProc, (HWND hwnd, UINT me
 				ShowWindow(wp[nIdx].hWndRBN, nCmdShow);
 
 				true_SetWindowPos(wp[nIdx].hWndCBN, NULL, BUTTON_NEW_X, nIdx * 25 + 46, BUTTON_NEW_W, BUTTON_NEW_H, SWP_NOZORDER);
+
+				// サイズを変更したボタンは元に戻す必要があるので記録しておく
+				hWndBkup[nIdx] = wp[nIdx].hWndCBN;
 			}
 			for (int nIdx = nvIdxMax; nIdx < 6; nIdx++)
 			{
 				ShowWindow(wp[nIdx].hWndLBN, SW_HIDE);
 				ShowWindow(wp[nIdx].hWndRBN, SW_HIDE);
 
-				true_SetWindowPos(wp[nIdx].hWndCBN, NULL, BUTTON_ORG_X, nIdx * 25 + 46, BUTTON_ORG_W, BUTTON_ORG_H, SWP_NOZORDER);
+				hWndBkup[nIdx] = NULL;
 			}
 		}
 		break;
@@ -277,8 +286,7 @@ IMPLEMENT_HOOK_PROC_NULL(LRESULT, WINAPI, SettingDialogProc, (HWND hwnd, UINT me
 
 IMPLEMENT_HOOK_PROC(BOOL, WINAPI, SetWindowPos, (HWND hWnd, HWND hWndInsertAfter, int x, int y, int w, int h, UINT uFlags))
 {
-	//DWORD dAtom = GetClassLong(hWnd, GCW_ATOM);
-	//MY_TRACE("SetWinPos,HWND:0x%08X,A:%s,X:%02d,Y:%02d,W:%02d,H:%02d,F:0x%08X\n", hWnd, mClassName[dAtom], x, y, w, h, uFlags);
+	MY_TRACE("SetWinPos,HWND:0x%08X,X:%02d,Y:%02d,W:%02d,H:%02d,F:0x%08X\n", hWnd, x, y, w, h, uFlags);
 
 	AdjustButtonPos(hWnd, &x, &y, &w, &h, &uFlags);
 	return true_SetWindowPos(hWnd, hWndInsertAfter, x, y, w, h, uFlags);
