@@ -212,6 +212,7 @@ copy "$(TargetPath)" "%RELEASEPATH%"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\NOTICE.md" />
     <None Include="..\README.md" />
     <None Include="ParamCopy.def" />
   </ItemGroup>
