@@ -9,10 +9,10 @@ DECLARE_HOOK_PROC(LRESULT, WINAPI, SettingDialogProc, (HWND hWnd, UINT message, 
 
 extern BOOL InitParamCopy();
 
-#define BN_PARAMCOPY_START 0x7890
+#define ID_BN_PARAMCOPY_START 0x7890
 
 typedef enum : UINT16 {
-	ID_BN_X_B = BN_PARAMCOPY_START,
+	ID_BN_X_B = ID_BN_PARAMCOPY_START,
 	ID_BN_X_E,
 
 	ID_BN_Y_B,

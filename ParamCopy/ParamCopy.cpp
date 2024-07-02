@@ -3,6 +3,7 @@
 #include <winuser.h>
 #include <tchar.h>
 #include <strsafe.h>
+#include <stdlib.h>
 
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
@@ -92,35 +93,33 @@ void AdjustButtonPos(HWND hWnd, int *nX, int *nY, int *nW, int *nH, UINT *uFlags
 	int nRes = GetClassName(hWnd, sClassName, 32);
 	if (nRes == 0) return;
 
-	int nvIdx = 0;
+	div_t dt = { 0 };
 	int nvIdxMax = 6;
 	if (strncmp(sClassName, "Button", 6) == 0)
 	{
-		if (((*nY - 46) % 25) != 0) return;
-
-		nvIdx = (*nY - 46) / 25;
-		if (nvIdx < nvIdxMax)
+		dt = div(*nY - 46, 25);
+		if (dt.rem != 0) return;
+		if (dt.quot < nvIdxMax)
 		{
-			if (*nX == 214) wp[nvIdx].hWndCBN = hWnd;
+			if (*nX == 214) wp[dt.quot].hWndCBN = hWnd;
 		}
 	}
 
 	if (strncmp(sClassName, "Edit", 4) == 0)
 	{
-		if (((*nY - 49) % 25) != 0) return;
-
-		nvIdx = (*nY - 49) / 25;
-		if (nvIdx < nvIdxMax)
+		dt = div(*nY - 49, 25);
+		if (dt.rem != 0) return;
+		if (dt.quot < nvIdxMax)
 		{
-			if (*nX == 168) wp[nvIdx].hWndLED = hWnd;
-			if (*nX == 274) wp[nvIdx].hWndRED = hWnd;
+			if (*nX == 168) wp[dt.quot].hWndLED = hWnd;
+			if (*nX == 274) wp[dt.quot].hWndRED = hWnd;
 		}
 	}
 }
 
 void CopyParam(HWND hWnd, int nIdBn)
 {
-	int nIdxBn = nIdBn - BN_PARAMCOPY_START;
+	int nIdxBn = nIdBn - ID_BN_PARAMCOPY_START;
 	int nIdxRow = nIdxBn >> 1;
 
 	HWND hWndSrc;
