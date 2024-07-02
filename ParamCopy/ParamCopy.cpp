@@ -84,29 +84,37 @@ HWND CreateButton(HWND hParentWnd, int nButtonID, int x, int y, HANDLE hIcon)
 
 void AdjustButtonPos(HWND hWnd, int *nX, int *nY, int *nW, int *nH, UINT *uFlags)
 {
+	// X よりも上にあるフォームは処理しない
+	if (*nY < 44) return;
 
 	// X、Y、Z、拡大率、透明度、回転ボタンと編集ボックスのウインドウハンドルを保存
+	char sClassName[32];
+	int nRes = GetClassName(hWnd, sClassName, 32);
+	if (nRes == 0) return;
+
 	int nvIdx = 0;
 	int nvIdxMax = 6;
-	DWORD dAtom = GetClassLong(hWnd, GCW_ATOM);
-	switch (dAtom)
+	if (strncmp(sClassName, "Button", 6) == 0)
 	{
-	case CA_BN:
+		if (((*nY - 46) % 25) != 0) return;
+
 		nvIdx = (*nY - 46) / 25;
 		if (nvIdx < nvIdxMax)
 		{
 			if (*nX == 214) wp[nvIdx].hWndCBN = hWnd;
 		}
-		break;
+	}
 
-	case CA_EDIT:
+	if (strncmp(sClassName, "Edit", 4) == 0)
+	{
+		if (((*nY - 49) % 25) != 0) return;
+
 		nvIdx = (*nY - 49) / 25;
 		if (nvIdx < nvIdxMax)
 		{
 			if (*nX == 168) wp[nvIdx].hWndLED = hWnd;
 			if (*nX == 274) wp[nvIdx].hWndRED = hWnd;
 		}
-		break;
 	}
 }
 
@@ -144,10 +152,12 @@ ObjectType GetCurrentObject()
 		ExEdit::Object* o = aui.GetObject(nObjIdx);
 		if (o != NULL) {
 			ExEdit::Object::FilterParam* fp = o->filter_param;
+			ExEdit::Object::FilterStatus* fs = o->filter_status;
 			for (int i = 0; i < 12; i++) {
 				if (fp[i].is_valid()) {
 					if (fp[i].id == OT_STD_DRAW || fp[i].id == OT_EXT_DRAW || fp[i].id == OT_GRP_CTRL) {
 						otCurrent = (ObjectType)fp[i].id;
+						is_fold = (((unsigned char)fs[0] & (unsigned char)ExEdit::Object::FilterStatus::Folding) == (unsigned char)ExEdit::Object::FilterStatus::Folding);
 						{
 							//ExEdit::Filter* f = aui.GetFilter(fp[i].id);
 							//MY_TRACE("DispName:%s,Idx:%02d,Id:%02d,Flag: %s %s %s %s %s %s %s %s, FilterName: %s\n",
@@ -171,7 +181,8 @@ ObjectType GetCurrentObject()
 			}
 		}
 	}
-	MY_TRACE("GetCurrentObject: Id: %02d\n", otCurrent);
+
+	MY_TRACE("GetCurrentObject: Id: %02d, Fold: %s\n", otCurrent, is_fold ? "Folded" : "Normal");
 	return otCurrent;
 }
 
@@ -272,9 +283,6 @@ IMPLEMENT_HOOK_PROC_NULL(LRESULT, WINAPI, SettingDialogProc, (HWND hwnd, UINT me
 		case ID_BN_T_B:	case ID_BN_T_E:
 		case ID_BN_R_B:	case ID_BN_R_E:
 			CopyParam(hwnd, wParam);
-			break;
-		case 0x00001194:  // fold/unfold first filter
-			is_fold = is_fold ? FALSE : TRUE;
 			break;
 		}
 		break;
