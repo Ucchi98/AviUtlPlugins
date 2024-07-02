@@ -212,6 +212,7 @@ copy "$(TargetPath)" "%RELEASEPATH%"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="ParamCopy.def" />
   </ItemGroup>
   <ItemGroup>
@@ -297,6 +298,9 @@ copy "$(TargetPath)" "%RELEASEPATH%"</Command>
   <ItemGroup>
     <Image Include="rightArrow.ico" />
     <Image Include="leftArrow.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\LICENSE.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

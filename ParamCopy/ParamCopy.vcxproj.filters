@@ -22,10 +22,16 @@
     <Filter Include="Detours">
       <UniqueIdentifier>{cfa7c795-a2dd-46b8-bad0-cec940ed7cfc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Docs">
+      <UniqueIdentifier>{fd4c5864-df4c-4f72-aa41-72c572a9f9e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ParamCopy.def">
       <Filter>ソース ファイル</Filter>
+    </None>
+    <None Include="..\README.md">
+      <Filter>Docs</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -263,5 +269,10 @@
     <Image Include="rightArrow.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\LICENSE.txt">
+      <Filter>Docs</Filter>
+    </Text>
   </ItemGroup>
 </Project>
