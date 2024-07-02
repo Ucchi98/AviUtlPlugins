@@ -32,7 +32,6 @@
 static AviUtlInternal aui;
 static ParamCopyRow wp[8] = { 0 };
 static HWND hWndBkup[8] = { 0 };
-static ObjectType otCurrent = OT_STD_DRAW;
 static bool is_fold = false;
 
 BOOL InitParamCopy()
@@ -136,10 +135,10 @@ void CopyParam(HWND hWnd, int nIdBn)
 	SetFocus(hWnd);
 }
 
-void GetCurrentObject()
+ObjectType GetCurrentObject()
 {
 	// 選択しているオブジェクトに ParamCopy ボタンを追加する対象のフィルタが登録されているか確認
-	otCurrent = OT_NONE;
+	ObjectType otCurrent = OT_NONE;
 	int nObjIdx = aui.GetCurrentObjectIndex();
 	if (nObjIdx >= 0) {
 		ExEdit::Object* o = aui.GetObject(nObjIdx);
@@ -173,6 +172,7 @@ void GetCurrentObject()
 		}
 	}
 	MY_TRACE("GetCurrentObject: Id: %02d\n", otCurrent);
+	return otCurrent;
 }
 
 IMPLEMENT_HOOK_PROC_NULL(LRESULT, WINAPI, SettingDialogProc, (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam))
@@ -205,8 +205,9 @@ IMPLEMENT_HOOK_PROC_NULL(LRESULT, WINAPI, SettingDialogProc, (HWND hwnd, UINT me
 	case WM_SHOWWINDOW:
 		MY_TRACE(_T("WM_SHOWWINDOW\n"));
 		{
-			GetCurrentObject();
+			ObjectType otCurrent = GetCurrentObject();
 
+			// ボタンサイズ変更によりボタンの文字を短く変更
 			int nvIdxMax = 0;
 			int nCmdShow = (is_fold ? SW_HIDE : SW_SHOW);
 			switch (otCurrent)
