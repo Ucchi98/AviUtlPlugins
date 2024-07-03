@@ -16,7 +16,7 @@ extern BOOL InitParamCopy();
 
 #define ID_BN_PARAMCOPY_START 0x7890
 
-typedef enum : UINT16 {
+typedef enum ParamCopyButton : UINT16 {
 	ID_BN_X_B = ID_BN_PARAMCOPY_START,
 	ID_BN_X_E,
 
@@ -36,7 +36,7 @@ typedef enum : UINT16 {
 	ID_BN_R_E
 } ParamCopyButton;
 
-typedef struct {
+typedef struct ParamCopyRow {
 	HWND hWndLED;	// left edit
 	HWND hWndLBN;	// left button for param copy
 	HWND hWndCBN;	// center button
@@ -45,16 +45,7 @@ typedef struct {
 	LONG wCBNID;    // center button id
 } ParamCopyRow;
 
-typedef enum {
-	CA_BN   = 0xc018, // Button
-	CA_EDIT = 0xc019, // Edit
-	CA_STAT = 0xc01a, // Static
-	CA_CB   = 0xc01d, // ComboBox
-	CA_TB   = 0xc16a, // TrackBar
-	CA_UD   = 0xc16c, // UpDown
-} ClassAtom;
-
-typedef struct {
+typedef struct ObjectInfo {
 	typedef enum {
 		OT_NONE = -1,
 		// 00 “®‰æƒtƒ@ƒCƒ‹
