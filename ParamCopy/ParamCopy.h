@@ -10,7 +10,7 @@ DECLARE_HOOK_PROC(LRESULT, WINAPI, SettingDialogProc, (HWND hWnd, UINT message, 
 extern BOOL InitParamCopy();
 
 #define FILTER_NAME "ParamCopy"
-#define FILTER_VER  "1.3.0"
+#define FILTER_VER  "1.2.0"
 #define FILTER_BY   "by Ucchi"
 #define FILTER_INFO "" FILTER_NAME """ Ver.""" FILTER_VER """ """ FILTER_BY ""
 
