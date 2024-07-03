@@ -9,6 +9,11 @@ DECLARE_HOOK_PROC(LRESULT, WINAPI, SettingDialogProc, (HWND hWnd, UINT message, 
 
 extern BOOL InitParamCopy();
 
+#define FILTER_NAME "ParamCopy"
+#define FILTER_VER  "1.1.0"
+#define FILTER_BY   "by Ucchi"
+#define FILTER_INFO "" FILTER_NAME """ Ver.""" FILTER_VER """ """ FILTER_BY ""
+
 #define ID_BN_PARAMCOPY_START 0x7890
 
 typedef enum : UINT16 {
@@ -37,6 +42,7 @@ typedef struct {
 	HWND hWndCBN;	// center button
 	HWND hWndRBN;	// right button for param copy
 	HWND hWndRED;	// right edit
+	LONG wCBNID;    // center button id
 } ParamCopyRow;
 
 typedef enum {
@@ -48,33 +54,39 @@ typedef enum {
 	CA_UD   = 0xc16c, // UpDown
 } ClassAtom;
 
-typedef enum {
-	OT_NONE = -1,
-	// 00 動画ファイル
-	// 01 画像ファイル
-	// 02 音声ファイル
-	// 03 テキスト
-	// 04 図形
-	// 05 フレームバッファ
-	// 06 音声波形表示
-	// 07 シーン
-	// 08 シーン(音声)
-	// 09 直前オブジェクト
-	OT_STD_DRAW = 10,	// 標準描画
-	OT_EXT_DRAW = 11,	// 拡張描画
-	// 12 標準再生
-	// 13 パーティクル出力
-	// 15 色調補正
-	// 16 クリッピング
-	// 17 斜めクリッピング
-	// 18 ぼかし
-	// 21 モザイク
-	// 42 斜めクリップ
-	// 80 カスタムオブジェクト
-	// 93 時間制御
-	OT_GRP_CTRL = 94,	// グループ制御
-	// 95 カメラ制御
-	// 97 カメラ効果(手振れ)
-	// 98 カメラ制御(シャドー)
-	// 99 カメラ制御(スクリプト)
-} ObjectType;
+typedef struct {
+	typedef enum {
+		OT_NONE = -1,
+		// 00 動画ファイル
+		// 01 画像ファイル
+		// 02 音声ファイル
+		// 03 テキスト
+		// 04 図形
+		// 05 フレームバッファ
+		// 06 音声波形表示
+		// 07 シーン
+		// 08 シーン(音声)
+		// 09 直前オブジェクト
+		OT_STD_DRAW = 10,	// 標準描画
+		OT_EXT_DRAW = 11,	// 拡張描画
+		// 12 標準再生
+		// 13 パーティクル出力
+		// 15 色調補正
+		// 16 クリッピング
+		// 17 斜めクリッピング
+		// 18 ぼかし
+		// 21 モザイク
+		// 42 斜めクリップ
+		// 80 カスタムオブジェクト
+		// 93 時間制御
+		OT_GRP_CTRL = 94,	// グループ制御
+		// 95 カメラ制御
+		// 97 カメラ効果(手振れ)
+		// 98 カメラ制御(シャドー)
+		// 99 カメラ制御(スクリプト)
+	} ObjectType;
+
+	ObjectType oType ;
+	BOOL bFolded;
+
+} ObjectInfo;

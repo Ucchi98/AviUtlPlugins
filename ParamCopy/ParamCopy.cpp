@@ -33,7 +33,6 @@
 static AviUtlInternal aui;
 static ParamCopyRow wp[8] = { 0 };
 static HWND hWndBkup[8] = { 0 };
-static bool is_fold = false;
 
 BOOL InitParamCopy()
 {
@@ -60,7 +59,7 @@ BOOL InitParamCopy()
 	}
 }
 
-HWND CreateButton(HWND hParentWnd, int nButtonID, int x, int y, HANDLE hIcon)
+HWND CreateParamCopyButton(HWND hParentWnd, int nButtonID, int x, int y, HANDLE hIcon)
 {
 	// Create Button
 	HWND hWndBn = CreateWindowEx(
@@ -83,7 +82,22 @@ HWND CreateButton(HWND hParentWnd, int nButtonID, int x, int y, HANDLE hIcon)
 	return hWndBn;
 }
 
-void AdjustButtonPos(HWND hWnd, int *nX, int *nY, int *nW, int *nH, UINT *uFlags)
+void EnableParamCopyButton()
+{
+	// ParamCopy ボタンの有効・無効状態を
+	// 右側のエディットボックスの状態に合わせる
+	for (int nIdx = 0; nIdx < 6; nIdx++)
+	{
+		if (wp[nIdx].hWndRED == NULL) continue;
+
+		BOOL bIsWndEn = ((GetWindowLong(wp[nIdx].hWndRED, GWL_STYLE) & WS_DISABLED) != WS_DISABLED);
+
+		EnableWindow(wp[nIdx].hWndLBN, bIsWndEn);
+		EnableWindow(wp[nIdx].hWndRBN, bIsWndEn);
+	}
+}
+
+void FindButtonPos(HWND hWnd, int *nX, int *nY, int *nW, int *nH, UINT *uFlags)
 {
 	// X よりも上にあるフォームは処理しない
 	if (*nY < 44) return;
@@ -93,6 +107,8 @@ void AdjustButtonPos(HWND hWnd, int *nX, int *nY, int *nW, int *nH, UINT *uFlags
 	int nRes = GetClassName(hWnd, sClassName, 32);
 	if (nRes == 0) return;
 
+	LONG lID = GetWindowLong(hWnd, GWL_ID);
+
 	div_t dt = { 0 };
 	int nvIdxMax = 6;
 	if (strncmp(sClassName, "Button", 6) == 0)
@@ -101,7 +117,11 @@ void AdjustButtonPos(HWND hWnd, int *nX, int *nY, int *nW, int *nH, UINT *uFlags
 		if (dt.rem != 0) return;
 		if (dt.quot < nvIdxMax)
 		{
-			if (*nX == 214) wp[dt.quot].hWndCBN = hWnd;
+			if (*nX == 214)
+			{
+				wp[dt.quot].hWndCBN = hWnd;
+				wp[dt.quot].wCBNID = lID;
+			}
 		}
 	}
 
@@ -142,51 +162,41 @@ void CopyParam(HWND hWnd, int nIdBn)
 	SetFocus(hWnd);
 }
 
-ObjectType GetCurrentObject()
+ObjectInfo GetCurrentObjectInfo()
 {
 	// 選択しているオブジェクトに ParamCopy ボタンを追加する対象のフィルタが登録されているか確認
-	ObjectType otCurrent = OT_NONE;
+	ObjectInfo oi = { ObjectInfo::ObjectType::OT_NONE, FALSE };
+
 	int nObjIdx = aui.GetCurrentObjectIndex();
-	if (nObjIdx >= 0) {
-		ExEdit::Object* o = aui.GetObject(nObjIdx);
-		if (o != NULL) {
-			ExEdit::Object::FilterParam* fp = o->filter_param;
-			ExEdit::Object::FilterStatus* fs = o->filter_status;
-			for (int i = 0; i < 12; i++) {
-				if (fp[i].is_valid()) {
-					if (fp[i].id == OT_STD_DRAW || fp[i].id == OT_EXT_DRAW || fp[i].id == OT_GRP_CTRL) {
-						otCurrent = (ObjectType)fp[i].id;
-						is_fold = (((unsigned char)fs[0] & (unsigned char)ExEdit::Object::FilterStatus::Folding) == (unsigned char)ExEdit::Object::FilterStatus::Folding);
-						{
-							//ExEdit::Filter* f = aui.GetFilter(fp[i].id);
-							//MY_TRACE("DispName:%s,Idx:%02d,Id:%02d,Flag: %s %s %s %s %s %s %s %s, FilterName: %s\n",
-							//	o->dispname,
-							//	i,
-							//	fp[i].id,
-							//	((uint32_t)f->flag & (uint32_t)ExEdit::Filter::Flag::Input ? "Input" : ""),
-							//	((uint32_t)f->flag & (uint32_t)ExEdit::Filter::Flag::Output ? "Output" : ""),
-							//	((uint32_t)f->flag & (uint32_t)ExEdit::Filter::Flag::Effect ? "Effect" : ""),
-							//	((uint32_t)f->flag & (uint32_t)ExEdit::Filter::Flag::HasExdata ? "HasExdata" : ""),
-							//	((uint32_t)f->flag & (uint32_t)ExEdit::Filter::Flag::BasicEffect ? "BasicEffect" : ""),
-							//	((uint32_t)f->flag & (uint32_t)ExEdit::Filter::Flag::Audio ? "Audio" : ""),
-							//	((uint32_t)f->flag & (uint32_t)ExEdit::Filter::Flag::Control ? "Control" : ""),
-							//	((uint32_t)f->flag & (uint32_t)ExEdit::Filter::Flag::ExEditFilter ? "ExEditFilter" : ""),
-							//	f->name
-							//);
-						}
-						break;
-					}
-				}
-			}
-		}
+	if (nObjIdx < 0) return oi;
+
+	ExEdit::Object* o = aui.GetObject(nObjIdx);
+
+	int nFilters = o->countFilters();
+	if (nFilters <= 0) return oi;
+
+	ExEdit::Object::FilterParam fp = o->filter_param[nFilters - 1];
+	ExEdit::Object::FilterStatus fs = o->filter_status[0];
+
+	switch (fp.id)
+	{
+	case ObjectInfo::ObjectType::OT_STD_DRAW:
+	case ObjectInfo::ObjectType::OT_EXT_DRAW:
+	case ObjectInfo::ObjectType::OT_GRP_CTRL:
+		oi.oType = (ObjectInfo::ObjectType)fp.id;
+		break;
 	}
 
-	MY_TRACE("GetCurrentObject: Id: %02d, Fold: %s\n", otCurrent, is_fold ? "Folded" : "Normal");
-	return otCurrent;
+	oi.bFolded = ((GetWindowLong(wp[0].hWndCBN, GWL_STYLE) & WS_VISIBLE) != WS_VISIBLE);
+
+	MY_TRACE("GetCurrentObject: Id: %02d, Fold: %s\n", oi.oType, oi.bFolded ? "Folded" : "Normal");
+	return oi;
 }
 
 IMPLEMENT_HOOK_PROC_NULL(LRESULT, WINAPI, SettingDialogProc, (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam))
 {
+	LRESULT lRes = 0;
+
 	switch (message)
 	{
 	case WM_CREATE:
@@ -197,42 +207,42 @@ IMPLEMENT_HOOK_PROC_NULL(LRESULT, WINAPI, SettingDialogProc, (HWND hwnd, UINT me
 			HANDLE hIconLA = LoadImage(hInst, MAKEINTRESOURCE(IDI_ICON_LA), IMAGE_ICON, 16, 16, 0);
 			HANDLE hIconRA = LoadImage(hInst, MAKEINTRESOURCE(IDI_ICON_RA), IMAGE_ICON, 16, 16, 0);
 
-			wp[0].hWndLBN = CreateButton(hwnd, ID_BN_X_B, 214,  46, hIconLA);  // X Begin
-			wp[0].hWndRBN = CreateButton(hwnd, ID_BN_X_E, 259,  46, hIconRA);  // X End
-			wp[1].hWndLBN = CreateButton(hwnd, ID_BN_Y_B, 214,  71, hIconLA);  // Y Begin
-			wp[1].hWndRBN = CreateButton(hwnd, ID_BN_Y_E, 259,  71, hIconRA);  // Y End
-			wp[2].hWndLBN = CreateButton(hwnd, ID_BN_Z_B, 214,  96, hIconLA);  // Z Begin
-			wp[2].hWndRBN = CreateButton(hwnd, ID_BN_Z_E, 259,  96, hIconRA);  // Z End
-			wp[3].hWndLBN = CreateButton(hwnd, ID_BN_M_B, 214, 121, hIconLA);  // ZoomRatio Begin
-			wp[3].hWndRBN = CreateButton(hwnd, ID_BN_M_E, 259, 121, hIconRA);  // ZoomRatio End
-			wp[4].hWndLBN = CreateButton(hwnd, ID_BN_T_B, 214, 146, hIconLA);  // Transparency Begin
-			wp[4].hWndRBN = CreateButton(hwnd, ID_BN_T_E, 259, 146, hIconRA);  // Transparency End
-			wp[5].hWndLBN = CreateButton(hwnd, ID_BN_R_B, 214, 171, hIconLA);  // Rotation Begin
-			wp[5].hWndRBN = CreateButton(hwnd, ID_BN_R_E, 259, 171, hIconRA);  // Rotation End
+			wp[0].hWndLBN = CreateParamCopyButton(hwnd, ID_BN_X_B, 214,  46, hIconLA);  // X Begin
+			wp[0].hWndRBN = CreateParamCopyButton(hwnd, ID_BN_X_E, 259,  46, hIconRA);  // X End
+			wp[1].hWndLBN = CreateParamCopyButton(hwnd, ID_BN_Y_B, 214,  71, hIconLA);  // Y Begin
+			wp[1].hWndRBN = CreateParamCopyButton(hwnd, ID_BN_Y_E, 259,  71, hIconRA);  // Y End
+			wp[2].hWndLBN = CreateParamCopyButton(hwnd, ID_BN_Z_B, 214,  96, hIconLA);  // Z Begin
+			wp[2].hWndRBN = CreateParamCopyButton(hwnd, ID_BN_Z_E, 259,  96, hIconRA);  // Z End
+			wp[3].hWndLBN = CreateParamCopyButton(hwnd, ID_BN_M_B, 214, 121, hIconLA);  // ZoomRatio Begin
+			wp[3].hWndRBN = CreateParamCopyButton(hwnd, ID_BN_M_E, 259, 121, hIconRA);  // ZoomRatio End
+			wp[4].hWndLBN = CreateParamCopyButton(hwnd, ID_BN_T_B, 214, 146, hIconLA);  // Transparency Begin
+			wp[4].hWndRBN = CreateParamCopyButton(hwnd, ID_BN_T_E, 259, 146, hIconRA);  // Transparency End
+			wp[5].hWndLBN = CreateParamCopyButton(hwnd, ID_BN_R_B, 214, 171, hIconLA);  // Rotation Begin
+			wp[5].hWndRBN = CreateParamCopyButton(hwnd, ID_BN_R_E, 259, 171, hIconRA);  // Rotation End
 		}
 		break;
 
 	case WM_SHOWWINDOW:
 		MY_TRACE(_T("WM_SHOWWINDOW\n"));
 		{
-			ObjectType otCurrent = GetCurrentObject();
+			ObjectInfo oiCurrent = GetCurrentObjectInfo();
 
 			// ボタンサイズ変更によりボタンの文字を短く変更
 			int nvIdxMax = 0;
-			int nCmdShow = (is_fold ? SW_HIDE : SW_SHOW);
-			switch (otCurrent)
+			int nCmdShow = (oiCurrent.bFolded ? SW_HIDE : SW_SHOW);
+			switch (oiCurrent.oType)
 			{
-			case OT_STD_DRAW:
+			case ObjectInfo::ObjectType::OT_STD_DRAW:
 				SetWindowText(wp[3].hWndCBN, _T("拡大"));
 				SetWindowText(wp[4].hWndCBN, _T("透明"));
 				nvIdxMax = 6;
 				break;
-			case OT_EXT_DRAW:
+			case ObjectInfo::ObjectType::OT_EXT_DRAW:
 				SetWindowText(wp[3].hWndCBN, _T("拡大"));
 				SetWindowText(wp[4].hWndCBN, _T("透明"));
 				nvIdxMax = 5;
 				break;
-			case OT_GRP_CTRL:
+			case ObjectInfo::ObjectType::OT_GRP_CTRL:
 				SetWindowText(wp[3].hWndCBN, _T("拡大"));
 				nvIdxMax = 4;
 				break;
@@ -269,6 +279,8 @@ IMPLEMENT_HOOK_PROC_NULL(LRESULT, WINAPI, SettingDialogProc, (HWND hwnd, UINT me
 
 				hWndBkup[nIdx] = NULL;
 			}
+
+			EnableParamCopyButton();
 		}
 		break;
 
@@ -283,6 +295,17 @@ IMPLEMENT_HOOK_PROC_NULL(LRESULT, WINAPI, SettingDialogProc, (HWND hwnd, UINT me
 		case ID_BN_R_B:	case ID_BN_R_E:
 			CopyParam(hwnd, wParam);
 			break;
+
+		default:
+			for (int i = 0; i < 6; i++)
+			{
+				if (wParam == wp[i].wCBNID) {
+					lRes = true_SettingDialogProc(hwnd, message, wParam, lParam);
+					EnableParamCopyButton();
+					return lRes;
+				}
+			}
+			break;
 		}
 		break;
 
@@ -294,9 +317,8 @@ IMPLEMENT_HOOK_PROC_NULL(LRESULT, WINAPI, SettingDialogProc, (HWND hwnd, UINT me
 
 IMPLEMENT_HOOK_PROC(BOOL, WINAPI, SetWindowPos, (HWND hWnd, HWND hWndInsertAfter, int x, int y, int w, int h, UINT uFlags))
 {
-	MY_TRACE("SetWinPos,HWND:0x%08X,X:%02d,Y:%02d,W:%02d,H:%02d,F:0x%08X\n", hWnd, x, y, w, h, uFlags);
-
-	AdjustButtonPos(hWnd, &x, &y, &w, &h, &uFlags);
+	//MY_TRACE("SetWinPos,HWND:0x%08X,X:%02d,Y:%02d,W:%02d,H:%02d,F:0x%08X\n", hWnd, x, y, w, h, uFlags);
+	FindButtonPos(hWnd, &x, &y, &w, &h, &uFlags);
 	return true_SetWindowPos(hWnd, hWndInsertAfter, x, y, w, h, uFlags);
 }
 
