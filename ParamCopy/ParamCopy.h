@@ -10,7 +10,7 @@ DECLARE_HOOK_PROC(LRESULT, WINAPI, SettingDialogProc, (HWND hWnd, UINT message, 
 extern BOOL InitParamCopy();
 
 #define FILTER_NAME "ParamCopy"
-#define FILTER_VER  "1.1.0"
+#define FILTER_VER  "1.3.0"
 #define FILTER_BY   "by Ucchi"
 #define FILTER_INFO "" FILTER_NAME """ Ver.""" FILTER_VER """ """ FILTER_BY ""
 
@@ -78,6 +78,7 @@ typedef struct {
 		// 21 モザイク
 		// 42 斜めクリップ
 		// 80 カスタムオブジェクト
+		OT_PRT_FILT = 88,	// 88 部分フィルタ
 		// 93 時間制御
 		OT_GRP_CTRL = 94,	// グループ制御
 		// 95 カメラ制御

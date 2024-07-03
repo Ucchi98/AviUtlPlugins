@@ -163,7 +163,7 @@ void CopyParam(HWND hWnd, int nIdBn)
 
 ObjectInfo GetCurrentObjectInfo()
 {
-	// 選択しているオブジェクトに ParamCopy ボタンを追加する対象のフィルタが登録されているか確認
+	// Get current object
 	ObjectInfo oi = { ObjectInfo::ObjectType::OT_NONE, FALSE };
 
 	int nObjIdx = aui.GetCurrentObjectIndex();
@@ -171,23 +171,28 @@ ObjectInfo GetCurrentObjectInfo()
 
 	ExEdit::Object* o = aui.GetObject(nObjIdx);
 
+	// Get number of filters applied to the object
 	int nFilters = o->countFilters();
 	if (nFilters <= 0) return oi;
 
-	ExEdit::Object::FilterParam fp = o->filter_param[nFilters - 1];
-	ExEdit::Object::FilterStatus fs = o->filter_status[0];
-
-	switch (fp.id)
+	// ParamCopy ボタンを追加する対象のフィルタがオブジェクトに適用されているか確認
+	for (int nIdx = 0; nIdx < nFilters && oi.oType==ObjectInfo::ObjectType::OT_NONE ; nIdx++)
 	{
-	case ObjectInfo::ObjectType::OT_STD_DRAW:
-	case ObjectInfo::ObjectType::OT_EXT_DRAW:
-	case ObjectInfo::ObjectType::OT_GRP_CTRL:
-		oi.oType = (ObjectInfo::ObjectType)fp.id;
-		break;
+		ExEdit::Object::FilterParam fp = o->filter_param[nIdx];
+		switch (fp.id)
+		{
+		case ObjectInfo::ObjectType::OT_STD_DRAW:
+		case ObjectInfo::ObjectType::OT_EXT_DRAW:
+		case ObjectInfo::ObjectType::OT_GRP_CTRL:
+		case ObjectInfo::ObjectType::OT_PRT_FILT:
+			oi.oType = (ObjectInfo::ObjectType)fp.id;
+			break;
+		}
 	}
 
+	// フィルタの折りたたみ状態を取得
 	oi.bFolded = ((GetWindowLong(wp[0].hWndCBN, GWL_STYLE) & WS_VISIBLE) != WS_VISIBLE);
-
+	
 	MY_TRACE("GetCurrentObject: Id: %02d, Fold: %s\n", oi.oType, oi.bFolded ? "Folded" : "Normal");
 	return oi;
 }
@@ -244,6 +249,9 @@ IMPLEMENT_HOOK_PROC_NULL(LRESULT, WINAPI, SettingDialogProc, (HWND hwnd, UINT me
 			case ObjectInfo::ObjectType::OT_GRP_CTRL:
 				SetWindowText(wp[3].hWndCBN, _T("拡大"));
 				nvIdxMax = 4;
+				break;
+			case ObjectInfo::ObjectType::OT_PRT_FILT:
+				nvIdxMax = 3;
 				break;
 			default:
 				nvIdxMax = 0;
