@@ -107,8 +107,6 @@ void FindButtonPos(HWND hWnd, int *nX, int *nY, int *nW, int *nH, UINT *uFlags)
 	int nRes = GetClassName(hWnd, sClassName, 32);
 	if (nRes == 0) return;
 
-	LONG lID = GetWindowLong(hWnd, GWL_ID);
-
 	div_t dt = { 0 };
 	int nvIdxMax = 6;
 	if (strncmp(sClassName, "Button", 6) == 0)
@@ -119,6 +117,7 @@ void FindButtonPos(HWND hWnd, int *nX, int *nY, int *nW, int *nH, UINT *uFlags)
 		{
 			if (*nX == 214)
 			{
+				LONG lID = GetWindowLong(hWnd, GWL_ID);
 				wp[dt.quot].hWndCBN = hWnd;
 				wp[dt.quot].wCBNID = lID;
 			}
